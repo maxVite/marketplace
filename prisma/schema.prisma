@@ -8,7 +8,34 @@ datasource db {
 }
 
 model Order {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
   price    Float
   quantity Int
+  status   OrderStatus @default(CREATED)
+
+  createdAt DateTime @default(now()) @db.Date
+
+  productId  String
+  customerId String
+  sellerId   String
+
+  Invoice Invoice[]
+}
+
+model Invoice {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
+  order   Order  @relation(fields: [orderId], references: [id])
+  pdfUrl  String
+
+  uploadedAt DateTime  @default(now()) @db.Date
+  sentAt     DateTime? @db.Date
+}
+
+enum OrderStatus {
+  CREATED              @map("created")
+  ACCEPTED             @map("accepted")
+  REJECTED             @map("rejected")
+  SHIPPING_IN_PROGRESS @map("shipping_in_progress")
+  SHIPPED              @map("shipped")
 }
