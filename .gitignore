@@ -2,6 +2,13 @@
 /dist
 /node_modules
 /build
+/apps/order/dist
+/apps/order/node_modules
+/apps/order/build
+/apps/invoice/dist
+/apps/invoice/node_modules
+/apps/invoice/build
+
 
 # Logs
 logs

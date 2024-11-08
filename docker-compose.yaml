@@ -1,0 +1,73 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: marketplace_db
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: example
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  order-service:
+    build:
+      context: .
+      dockerfile: apps/order/Dockerfile
+    container_name: order
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
+      RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  invoice-service:
+    build:
+      context: .
+      dockerfile: apps/invoice/Dockerfile
+    container_name: invoice
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
+      RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+volumes:
+  mongo_data:
+  rabbitmq_data:
