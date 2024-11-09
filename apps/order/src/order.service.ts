@@ -12,7 +12,7 @@ export class OrderService {
   ) {}
 
   sendOrderShippedEvent = async (orderId: string) => {
-    this.client.emit('order.shipped', { orderId });
+    this.client.emit<{ orderId: string }>('order_shipped', { orderId });
   };
 
   create = async (payload: CreateOrderPayload) => {
@@ -32,12 +32,17 @@ export class OrderService {
   };
 
   updateStatus = async (orderId: string, status: OrderStatus) => {
-    await this.prisma.order.update({
+    const updatedOrder = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         status,
       },
     });
+    if (status === OrderStatus.SHIPPED) {
+      await this.sendOrderShippedEvent(orderId);
+    }
+
+    return updatedOrder;
 
     // Send event if applicable
   };

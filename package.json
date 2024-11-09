@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "nest start",
     "start:order": "nest start order",
     "start:invoice": "nest start invoice",
-    "start:dev": "concurrently \"pnpm run start:order\" \"pnpm run start:invoice\"",
+    "start:all": "concurrently \"pnpm start:order\" \"pnpm start:invoice\"",
+    "start:dev": "concurrently \"pnpm start:order --watch\" \"pnpm start:invoice --watch\"",
     "build:order": "nest build order",
     "build:invoice": "nest build invoice",
     "build:all": "concurrently \"pnpm run build:order\" \"pnpm run build:invoice\"",

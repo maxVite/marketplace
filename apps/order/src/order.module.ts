@@ -22,7 +22,7 @@ import { PrismaModule } from '@app/prisma';
           transport: Transport.RMQ,
           options: {
             urls: [configService.get('RABBITMQ_URL')],
-            queue: configService.get('RABBITMQ_QUEUE'),
+            queue: configService.get('ORDER_QUEUE'),
             queueOptions: {
               durable: false,
             },

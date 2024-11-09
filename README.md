@@ -12,7 +12,7 @@ $ pnpm install
 
 ```bash
 # development
-$ pnpm run start
+$ pnpm run start:all
 
 # watch mode
 $ pnpm run start:dev

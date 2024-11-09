@@ -10,7 +10,7 @@ export const SharedConfigModule = ConfigModule.forRoot({
       .required(),
     DATABASE_URL: Joi.string().uri().required(),
     RABBITMQ_URL: Joi.string().uri().required(),
-    RABBITMQ_QUEUE: Joi.string().required(),
+    ORDER_QUEUE: Joi.string().required(),
   }),
   validationOptions: {
     abortEarly: true,

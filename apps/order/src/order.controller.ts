@@ -14,14 +14,14 @@ import { CreateOrderPayload, UpdateStatusPayload } from './order.dto';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly service: OrderService) {}
+  constructor(private readonly orderService: OrderService) {}
 
   readonly #logger = new Logger(OrderController.name);
 
   @Post()
   async create(@Body() payload: CreateOrderPayload) {
     try {
-      return await this.service.create(payload);
+      return await this.orderService.create(payload);
     } catch (error) {
       this.#logger.error(`Error creating new order ${error.message}`);
       throw new HttpException(
@@ -32,9 +32,9 @@ export class OrderController {
   }
 
   @Get()
-  async listOrders() {
+  async allOrders() {
     try {
-      return await this.service.getAllOrders();
+      return await this.orderService.getAllOrders();
     } catch (error) {
       this.#logger.error(`Error listing orders ${error.message}`);
       throw new HttpException(
@@ -47,7 +47,7 @@ export class OrderController {
   @Get(':id')
   async getOrder(@Param('id') id: string) {
     try {
-      return await this.service.getOrderById(id);
+      return await this.orderService.getOrderById(id);
     } catch (error) {
       this.#logger.error(`Error retrieving order - ${id}:  ${error.message}`);
       throw new HttpException(
@@ -63,7 +63,7 @@ export class OrderController {
     @Body() payload: UpdateStatusPayload,
   ) {
     try {
-      return await this.service.updateStatus(id, payload.status);
+      return await this.orderService.updateStatus(id, payload.status);
     } catch (error) {
       this.#logger.error(
         `Error updating status for order - ${id}:  ${error.message}`,
