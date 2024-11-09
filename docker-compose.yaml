@@ -46,6 +46,8 @@ services:
     restart: unless-stopped
     ports:
       - '3000:3000'
+    env_file:
+      - ./apps/order/.env'
     environment:
       DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
       RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
@@ -61,6 +63,8 @@ services:
     restart: unless-stopped
     ports:
       - '3001:3001'
+    env_file:
+      - ./apps/invoice/.env
     environment:
       DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
       RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
