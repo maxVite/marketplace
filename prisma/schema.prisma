@@ -20,6 +20,8 @@ model Order {
   sellerId   String
 
   Invoice Invoice[]
+
+  @@map("orders")
 }
 
 model Invoice {
@@ -30,6 +32,8 @@ model Invoice {
 
   uploadedAt DateTime  @default(now()) @db.Date
   sentAt     DateTime? @db.Date
+
+  @@map("invoices")
 }
 
 enum OrderStatus {

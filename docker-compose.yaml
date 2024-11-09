@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:6.0
+    image: prismagraphql/mongo-single-replica:4.4.3-bionic # this is an image for single replica mode and testing locally
     container_name: mongodb
     restart: unless-stopped
     ports:
@@ -9,6 +9,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: marketplace_db
+      INIT_WAIT_SEC: 3
     volumes:
       - mongo_data:/data/db
 

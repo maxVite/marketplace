@@ -8,9 +8,10 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
+import { PrismaModule } from '@app/prisma';
 
 @Module({
-  imports: [SharedConfigModule],
+  imports: [SharedConfigModule, PrismaModule],
   controllers: [OrderController],
   providers: [
     OrderService,
