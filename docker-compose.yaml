@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: prismagraphql/mongo-single-replica:4.4.3-bionic # this is an image for single replica mode and testing locally
+    image: prismagraphql/mongo-single-replica:4.4.3-bionic # todo: replace this, it's an image for single replica mode and testing locally
     container_name: mongodb
     restart: unless-stopped
     ports:
@@ -12,6 +12,11 @@ services:
       INIT_WAIT_SEC: 3
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongo', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongo-express:
     image: mongo-express:latest
@@ -24,7 +29,8 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_SERVER: mongodb
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
   rabbitmq:
     image: rabbitmq:3.11-management
@@ -38,40 +44,42 @@ services:
       RABBITMQ_DEFAULT_PASS: example
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  order-service:
-    build:
-      context: .
-      dockerfile: apps/order/Dockerfile
-    container_name: order
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
-    env_file:
-      - ./apps/order/.env'
-    environment:
-      DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
-      RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
-    depends_on:
-      - mongodb
-      - rabbitmq
+  # TODO: fix rabbitmq connection issue
+  # order-service:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/order/Dockerfile
+  #   container_name: order
+  #   restart: unless-stopped
+  #   ports:
+  #     - '3000:3000'
+  #   env_file: ./apps/order/.env
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
 
-  invoice-service:
-    build:
-      context: .
-      dockerfile: apps/invoice/Dockerfile
-    container_name: invoice
-    restart: unless-stopped
-    ports:
-      - '3001:3001'
-    env_file:
-      - ./apps/invoice/.env
-    environment:
-      DATABASE_URL: 'mongodb://root:example@mongodb:27017/marketplace_db'
-      RABBITMQ_URL: 'amqp://root:example@rabbitmq:5672'
-    depends_on:
-      - mongodb
-      - rabbitmq
+  # invoice-service:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/invoice/Dockerfile
+  #   container_name: invoice
+  #   restart: unless-stopped
+  #   ports:
+  #     - '3001:3001'
+  #   env_file: ./apps/invoice/.env
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
 
 volumes:
   mongo_data:

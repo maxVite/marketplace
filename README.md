@@ -4,6 +4,8 @@
 
 ## Installation
 
+Copy content of [`.env.example`](./.env.example) to `.env` and replace it with your own data
+
 ```bash
 $ pnpm install
 ```
@@ -17,8 +19,6 @@ $ pnpm run start:all
 # watch mode
 $ pnpm run start:dev
 
-# production mode
-$ pnpm run start:prod
 ```
 
 ## Test
@@ -32,6 +32,12 @@ $ pnpm run test:e2e
 
 # test coverage
 $ pnpm run test:cov
+```
+
+## Deploy test environment
+
+```bash
+docker-compose up -d
 ```
 
 ## Coding Challenge: Marketplace

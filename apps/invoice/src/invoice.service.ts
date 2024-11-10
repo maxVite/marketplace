@@ -8,15 +8,21 @@ import { PrismaService } from '@app/prisma';
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class InvoiceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
 
   readonly #logger = new Logger(InvoiceService.name);
 
+  readonly #UPLOADS_DIR = this.config.get<string>('UPLOADS_DIR');
+  readonly #API_URL = this.config.get<string>('INVOICE_API_URL');
+
   /**
-   * @todo use env variables for uploads dir
    * @todo Switch to GridFS implementation, local storage used to simplify upload
    */
   uploadInvoice = async (orderId: string, file: Express.Multer.File) => {
@@ -37,7 +43,7 @@ export class InvoiceService {
     }
 
     const fileName = `${randomUUID()}-${file.originalname}`;
-    const filePath = path.join(uploadsDir, fileName);
+    const filePath = path.join(this.#UPLOADS_DIR || 'uploads', fileName);
 
     await writeFile(filePath, file.buffer);
 
@@ -45,7 +51,7 @@ export class InvoiceService {
       data: {
         orderId,
         uploadedAt: new Date(),
-        pdfUrl: `http://localhost:3001/uploads/${fileName}`, // todo: change to env variable
+        pdfUrl: `${this.#API_URL}/uploads/${fileName}`,
       },
     });
 
@@ -76,9 +82,14 @@ export class InvoiceService {
   }
 
   /**
-   * @todo pagination, limit, sort
+   * @todo Add pagination, limit
    */
-  getAllInvoices = async () => this.prisma.invoice.findMany();
+  getAllInvoices = async () =>
+    this.prisma.invoice.findMany({
+      orderBy: {
+        uploadedAt: 'desc',
+      },
+    });
 
   getInvoiceById = (id: string) =>
     this.prisma.invoice.findFirst({ where: { id } });

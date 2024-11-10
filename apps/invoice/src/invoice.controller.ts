@@ -26,6 +26,8 @@ export class InvoiceController {
 
   readonly #logger = new Logger(InvoiceController.name);
 
+  readonly #UPLOADS_DIR = this.config.get<string>('UPLOADS_DIR');
+
   @Post(':orderId')
   @UseInterceptors(FileInterceptor('file'))
   async uploadInvoice(
@@ -45,9 +47,6 @@ export class InvoiceController {
     return this.invoiceService.getInvoiceById(id);
   }
 
-  /**
-   * @todo use env variables for uploads dir
-   */
   @Get('pdf/:id')
   async viewPdf(@Param('id') id: string, @Res() res: Response) {
     const invoice = await this.invoiceService.getInvoiceById(id);
@@ -58,10 +57,7 @@ export class InvoiceController {
     const url = invoice.pdfUrl;
     const fileName = basename(url);
 
-    const uploadsDir = join(
-      process.cwd(),
-      this.config.get<string>('UPLOADS_DIR') || 'uploads',
-    );
+    const uploadsDir = join(process.cwd(), this.#UPLOADS_DIR || 'uploads');
     const filePath = join(uploadsDir, fileName);
 
     try {

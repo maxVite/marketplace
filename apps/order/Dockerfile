@@ -20,8 +20,6 @@ COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist/apps/order ./dist/apps/order
 
-COPY apps/order/.env .env
-
 EXPOSE 3000
 
 CMD ["node", "dist/apps/order/main.js"]

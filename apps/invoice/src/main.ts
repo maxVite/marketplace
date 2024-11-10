@@ -21,6 +21,7 @@ async function bootstrap() {
 
   const RABBITMQ_URL = configService.getOrThrow('RABBITMQ_URL');
   const ORDER_QUEUE = configService.getOrThrow('ORDER_QUEUE');
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {

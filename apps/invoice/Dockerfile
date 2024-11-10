@@ -20,8 +20,6 @@ COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist/apps/invoice ./dist/apps/invoice
 
-COPY apps/invoice/.env .env
-
 EXPOSE 3001
 
 CMD ["node", "dist/apps/invoice/main.js"]

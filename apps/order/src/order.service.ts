@@ -43,8 +43,6 @@ export class OrderService {
     }
 
     return updatedOrder;
-
-    // Send event if applicable
   };
 
   /**
